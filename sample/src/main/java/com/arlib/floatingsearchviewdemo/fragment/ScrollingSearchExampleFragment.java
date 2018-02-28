@@ -120,6 +120,11 @@ public class ScrollingSearchExampleFragment extends BaseExampleFragment implemen
             }
 
             @Override
+            public void onSuggestionDeleted(SearchSuggestion searchSuggestion) {
+
+            }
+
+            @Override
             public void onSearchAction(String query) {
                 mLastQuery = query;
 

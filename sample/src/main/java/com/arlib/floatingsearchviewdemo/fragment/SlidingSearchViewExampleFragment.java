@@ -123,6 +123,11 @@ public class SlidingSearchViewExampleFragment extends BaseExampleFragment {
             }
 
             @Override
+            public void onSuggestionDeleted(SearchSuggestion searchSuggestion) {
+
+            }
+
+            @Override
             public void onSearchAction(String query) {
                 mLastQuery = query;
 

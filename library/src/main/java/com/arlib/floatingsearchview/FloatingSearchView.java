@@ -77,7 +77,6 @@ import com.bartoszlipinski.viewpropertyobjectanimator.ViewPropertyObjectAnimator
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -201,6 +200,8 @@ public class FloatingSearchView extends FrameLayout {
     private long mSuggestionSectionAnimDuration;
     private OnClearSearchActionListener mOnClearSearchActionListener;
 
+    List<? extends SearchSuggestion> newSearchSuggestions;
+
     //An interface for implementing a listener that will get notified when the suggestions
     //section's height is set. This is to be used internally only.
     private interface OnSuggestionSecHeightSetListener {
@@ -250,6 +251,8 @@ public class FloatingSearchView extends FrameLayout {
          */
         void onSuggestionClicked(SearchSuggestion searchSuggestion);
 
+        void onSuggestionDeleted(SearchSuggestion searchSuggestion);
+
         /**
          * Called when the current search has completed
          * as a result of pressing search key in the keyboard.
@@ -260,6 +263,8 @@ public class FloatingSearchView extends FrameLayout {
          * @param currentQuery the text that is currently set in the query TextView
          */
         void onSearchAction(String currentQuery);
+
+
     }
 
     /**
@@ -804,6 +809,7 @@ public class FloatingSearchView extends FrameLayout {
      * @param color the color to be applied to the search bar and
      *              the suggestion section background.
      */
+    @Override
     public void setBackgroundColor(int color) {
         mBackgroundColor = color;
         if (mQuerySection != null && mSuggestionsList != null) {
@@ -1308,6 +1314,27 @@ public class FloatingSearchView extends FrameLayout {
 
                         setQueryText(item.getBody());
                     }
+
+                    @Override
+                    public void onItemDeleted(SearchSuggestion item) {
+                        if (mSearchListener != null) {
+                            mSearchListener.onSuggestionDeleted(item);
+                        }
+                        swapSuggestions(newSearchSuggestions);
+                       // mSuggestionListContainer.requestLayout();
+                        /*new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                int addedHeight = 3 * Util.dpToPx(CARD_VIEW_CORNERS_AND_TOP_BOTTOM_SHADOW_HEIGHT);
+                                mSuggestionListContainer.getLayoutParams().height = mSuggestionsList.getMeasuredHeight()+addedHeight;
+                                mSuggestionListContainer.requestLayout();
+                            }
+                        },1500);*/
+
+
+
+
+                    }
                 });
         refreshShowMoveUpSuggestion();
         mSuggestionsAdapter.setTextColor(this.mSuggestionTextColor);
@@ -1345,6 +1372,7 @@ public class FloatingSearchView extends FrameLayout {
 
     private void swapSuggestions(final List<? extends SearchSuggestion> newSearchSuggestions,
                                  final boolean withAnim) {
+        this.newSearchSuggestions = newSearchSuggestions;
 
         mSuggestionsList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -1994,10 +2022,12 @@ public class FloatingSearchView extends FrameLayout {
 
         public static final Creator<SavedState> CREATOR
                 = new Creator<SavedState>() {
+            @Override
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }
 
+            @Override
             public SavedState[] newArray(int size) {
                 return new SavedState[size];
             }

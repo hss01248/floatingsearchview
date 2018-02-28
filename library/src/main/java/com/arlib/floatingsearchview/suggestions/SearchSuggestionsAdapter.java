@@ -64,6 +64,8 @@ public class SearchSuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.
         void onItemSelected(SearchSuggestion item);
 
         void onMoveItemToSearchClicked(SearchSuggestion item);
+
+        void onItemDeleted(SearchSuggestion item);
     }
 
     public static class SearchSuggestionViewHolder extends RecyclerView.ViewHolder {
@@ -79,6 +81,8 @@ public class SearchSuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.
             void onItemClicked(int adapterPosition);
 
             void onMoveItemToSearchClicked(int adapterPosition);
+
+            void onItemDeleted(int position);
         }
 
         public SearchSuggestionViewHolder(View v, Listener listener) {
@@ -88,6 +92,15 @@ public class SearchSuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.
             body = (TextView) v.findViewById(R.id.body);
             leftIcon = (ImageView) v.findViewById(R.id.left_icon);
             rightIcon = (ImageView) v.findViewById(R.id.right_icon);
+            leftIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (mListener != null && position != RecyclerView.NO_POSITION) {
+                        mListener.onItemDeleted(position);
+                    }
+                }
+            });
 
             rightIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,6 +170,14 @@ public class SearchSuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.
                         if (mListener != null) {
                             mListener.onMoveItemToSearchClicked(mSearchSuggestions
                                     .get(adapterPosition));
+                        }
+                    }
+
+                    @Override
+                    public void onItemDeleted(int position) {
+                        if(mListener!=null){
+                            mListener.onItemDeleted(mSearchSuggestions.remove(position));
+                            //notifyDataSetChanged();
                         }
                     }
 

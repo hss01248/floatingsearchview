@@ -14,6 +14,7 @@
         android:layout_marginStart="@dimen/search_bar_left_icon_left_margin"
         android:alpha="1"
         android:padding="@dimen/square_button_padding"
+        android:src="@drawable/ic_clear_black_24dp"
         android:visibility="visible"
         android:layout_marginLeft="@dimen/search_bar_left_icon_left_margin" />
 
